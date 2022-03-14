@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20075" systemVersion="21D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Replenichment" representedClassName=".Replenichment" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <relationship name="wallet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Wallet" inverseName="replenichment" inverseEntity="Wallet"/>
+    </entity>
+    <entity name="SpendCategory" representedClassName=".SpendCategory" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="spending" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Spending" inverseName="spendCategory" inverseEntity="Spending"/>
+    </entity>
+    <entity name="Spending" representedClassName=".Spending" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <relationship name="spendCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpendCategory" inverseName="spending" inverseEntity="SpendCategory"/>
+        <relationship name="wallet" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Wallet"/>
+    </entity>
+    <entity name="Wallet" representedClassName=".Wallet" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="icon" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="replenichment" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Replenichment" inverseName="wallet" inverseEntity="Replenichment"/>
+    </entity>
+    <elements>
+        <element name="Replenichment" positionX="117" positionY="-63" width="128" height="74"/>
+        <element name="SpendCategory" positionX="298.089599609375" positionY="-7.03399658203125" width="128" height="89"/>
+        <element name="Spending" positionX="91.5306396484375" positionY="-173.4060363769531" width="128" height="89"/>
+        <element name="Wallet" positionX="-63" positionY="-18" width="128" height="89"/>
+    </elements>
+</model>
