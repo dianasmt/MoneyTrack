@@ -8,14 +8,17 @@
 import UIKit
 import CoreData
 
-class AddWalletVC: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
+final class AddWalletVC: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
+    // MARK: - Outlets
     @IBOutlet private var walletPicker: UIPickerView!
     @IBOutlet private weak var nametf: UITextField!
-    var walletType = ["Cash", "Card"]
     
-    var wallet: Wallet?
+    // MARK: - Properties
+    private var walletType = ["Cash", "Card"]
+    private var wallet: Wallet?
     
+    // MARK: - Actions
     @IBAction func saveDidTap() {
         guard let name = nametf.text,
               let icon = nametf.text else { return }
@@ -29,20 +32,25 @@ class AddWalletVC: UIViewController, UIPickerViewDelegate, UIPickerViewDataSourc
         self.dismiss(animated: true, completion: nil)
     }
 
+    // MARK: - Override
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setup()
-        walletPicker.delegate = self
-        walletPicker.dataSource = self
+        setUpPicker()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    // MARK: - Methods
     private func setup() {
         nametf.text = walletType.first
+    }
+    
+    private func setUpPicker() {
+        walletPicker.delegate = self
+        walletPicker.dataSource = self
     }
     
     public func numberOfComponents(in pickerView: UIPickerView) -> Int{

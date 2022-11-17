@@ -8,46 +8,24 @@
 import UIKit
 import CoreData
 
-class CalculateVC: UIViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
+final class CalculateVC: UIViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
     
+    // MARK: - Outlets
     @IBOutlet private weak var walletPicker: UIPickerView!
     @IBOutlet private weak var spendCategoryPicker: UIPickerView!
     @IBOutlet private weak var sum: UILabel!
     @IBOutlet private weak var tfDate: UITextField!
     private var stillTyping = false
     
-   
-    
+    // MARK: - Properties
     private var fetchedResulController: NSFetchedResultsController<SpendCategory>!
     private var fetchedResulControllerW: NSFetchedResultsController<Wallet>!
-    
     private var wallets = [Wallet]()
     private var spendCategories = [SpendCategory]()
+    private var spendingCategory: SpendCategory?
+    private var wallet: Wallet?
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        walletPicker.delegate = self
-        walletPicker.dataSource = self
-        
-        spendCategoryPicker.delegate = self
-        spendCategoryPicker.dataSource = self
-        
-        setupFetchedResultControllerHistory()
-        setupFetchedResultControllerHistoryW()
-        loadSpendings()
-        loadWalletsForIncomes()
-        
-        tfDate.delegate = self
-        setUpTextField()
-        setupDate()
-        setUpSpend()
-    }
-    
-    var spendingCategory: SpendCategory?
-    var wallet: Wallet?
-    
+    // MARK: - Actions
     @IBAction func saveDidTap() {
         guard let moneyStr = sum.text,
               let money = Double(moneyStr) else { return }
@@ -85,10 +63,34 @@ class CalculateVC: UIViewController, UITextFieldDelegate, NSFetchedResultsContro
         dismiss(animated: true)
     }
     
+    // MARK: - Override
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUpPickers()
+        setupFetchedResultControllerHistory()
+        setupFetchedResultControllerHistoryW()
+        loadSpendings()
+        loadWalletsForIncomes()
+        
+        tfDate.delegate = self
+        setUpTextField()
+        setupDate()
+        setUpSpend()
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
  
+    // MARK: - Methods
+    private func setUpPickers() {
+        walletPicker.delegate = self
+        walletPicker.dataSource = self
+        
+        spendCategoryPicker.delegate = self
+        spendCategoryPicker.dataSource = self
+    }
+    
     private func setupFetchedResultControllerHistory() {
         let request = SpendCategory.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
@@ -129,7 +131,6 @@ class CalculateVC: UIViewController, UITextFieldDelegate, NSFetchedResultsContro
         if #available(iOS 13.4, *) {
             datePicker.preferredDatePickerStyle = .wheels
         }
-        
         tfDate.inputView = datePicker
         datePicker.addTarget(self,
                              action: #selector(datePickerDidChange(sender:)),
@@ -139,7 +140,6 @@ class CalculateVC: UIViewController, UITextFieldDelegate, NSFetchedResultsContro
     
     @objc func datePickerDidChange(sender: UIDatePicker) {
         let selectedDate = sender.date
-        
         dateFormatter.dateFormat = "d MMM yyyy"
         dateFormatter.locale = Locale(identifier: "En-en")
         
@@ -170,7 +170,6 @@ extension CalculateVC: UIPickerViewDelegate, UIPickerViewDataSource {
         self.view.endEditing(true)
         
         if pickerView == walletPicker {
-            
             return wallets[row].name
         } else {
             return spendCategories[row].name

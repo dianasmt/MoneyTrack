@@ -8,44 +8,29 @@
 import UIKit
 import CoreData
 
-class ReplenichmentVC: UIViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
-
+final class ReplenichmentVC: UIViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
+    
+    // MARK: - Outlets
     @IBOutlet private weak var sum: UILabel!
     @IBOutlet private weak var walletPicker: UIPickerView!
-    var stillTyping = false
-    var walletName: String? = ""
-    var wallets: [Wallet] = []
     
+    // MARK: - Properties
+    private var stillTyping = false
+    private var walletName: String? = ""
+    private var wallets: [Wallet] = []
     private var fetchedResulController: NSFetchedResultsController<Wallet>!
+    private var wallet: Wallet?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-       
-        
-        walletPicker.delegate = self
-        walletPicker.dataSource = self
-        
-        setupFetchedResultController()
-        load()
-        
-        fetchedResulController.delegate = self
-        setUpWallet()
-    }
-    
-    var wallet: Wallet?
-    
+    // MARK: - Actions
     @IBAction func saveDidTap() {
         guard let moneyStr = sum.text,
               let money = Double(moneyStr) else { return }
-
-        print("wallets \(wallets)")
         
         wallets.forEach {
             if $0.name == walletName {
                 $0.amount += Double(sum.text!)!
             }
         }
-        
         let newReplenichment = Replenichment(context: MoneyTrackService.managedObjectContext)
         newReplenichment.amount = money
         newReplenichment.wallet = wallet
@@ -55,14 +40,14 @@ class ReplenichmentVC: UIViewController, UITextFieldDelegate, NSFetchedResultsCo
     }
     
     @IBAction func numberDidTap(_ sender: UIButton) {
-        let number = sender.titleLabel?.text
+        guard let number = sender.titleLabel?.text, let safeSum = sum.text else { return }
         
         if stillTyping {
-            if sum.text!.count < 12 {
-                sum.text = sum.text! + number!
+            if safeSum.count < 12 {
+                sum.text = sum.text! + number
             }
         } else {
-            sum.text = number!
+            sum.text = number
             stillTyping = true
         }
     }
@@ -71,8 +56,26 @@ class ReplenichmentVC: UIViewController, UITextFieldDelegate, NSFetchedResultsCo
         sum.text = "0"
         stillTyping = false
     }
+    
     @IBAction func closeButton() {
         dismiss(animated: true)
+    }
+    
+    // MARK: - Override
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUpPicker()
+        setupFetchedResultController()
+        load()
+        
+        fetchedResulController.delegate = self
+        setUpWallet()
+    }
+    
+    // MARK: - Methods
+    private func setUpPicker() {
+        walletPicker.delegate = self
+        walletPicker.dataSource = self
     }
     
     private func setupFetchedResultController() {
@@ -99,23 +102,19 @@ extension ReplenichmentVC: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         1
     }
-
+    
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-            return wallets.count
+        return wallets.count
         
     }
-
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         self.view.endEditing(true)
-
-            return wallets[row].name
-      
+        return wallets[row].name
     }
-
+    
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.wallet = wallets[row]
         self.walletName = wallets[row].name
-        //            self.wallet = walletsTest[row]
-        
     }
 }

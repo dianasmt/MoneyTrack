@@ -7,15 +7,32 @@
 
 import UIKit
 
-class AnimationVC: UIViewController {
+final class AnimationVC: UIViewController {
+    
+    // MARK: - Consts
+    enum Const {
+        static let backgroundColor = "BackgroundColor"
+        static let textColor = "TextColor"
+    }
 
+    // MARK: - Outlets
     @IBOutlet private var moneyTrackText: [UILabel]!
     @IBOutlet private weak var ellipse: UIImageView!
     @IBOutlet private weak var vector: UIImageView!
   
+    // MARK: - Override
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        animationOfStartScreen()
+    }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupColor()
+    }
+    
+    // MARK: - Methods
+    private func animationOfStartScreen() {
         let startPosition: CGFloat = 18.0
         let endPosition: CGFloat = 170.0
         let endPositionVecor: CGFloat = UIScreen.main.bounds.height
@@ -37,25 +54,15 @@ class AnimationVC: UIViewController {
                 self.openMainScreen()
             }
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupColor()
-    }
     
-    func openMainScreen() {
-        
+    private func openMainScreen() {
         let nextVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "\(TabBarVC.self)")
-
         nextVC.modalPresentationStyle = .fullScreen
         present(nextVC, animated: true)
-        
-//        navigationController?.viewControllers = [nextVC]
-   
     }
     
     private func setupColor() {
-        view.backgroundColor = UIColor(named: "BackgroundColor")
-        moneyTrackText.forEach { $0.textColor = UIColor(named: "TextColor") }
+        view.backgroundColor = UIColor(named: Const.backgroundColor)
+        moneyTrackText.forEach { $0.textColor = UIColor(named: Const.textColor) }
     }
 }

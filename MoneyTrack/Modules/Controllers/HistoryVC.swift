@@ -8,8 +8,14 @@
 import UIKit
 import CoreData
 
-class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
-    
+final class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
+    // MARK: - Consts
+    enum Const {
+        static let backgroundColor = "BackgroundColor"
+        static let collectionColor = "CollectionColor"
+    }
+
+    // MARK: - Outlets
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var viewSpend: UIView!
     @IBOutlet private weak var viewEarn: UIView!
@@ -18,8 +24,7 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
     @IBOutlet private weak var money: UILabel!
     @IBOutlet private weak var monthLabel: UILabel!
     
-  
-    
+    // MARK: - Properties
     private var fetchedResulController: NSFetchedResultsController<Spending>!
     private var fetchedResulControllerW: NSFetchedResultsController<Wallet>!
     private var fetchedResulControllerR: NSFetchedResultsController<Replenichment>!
@@ -46,6 +51,7 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
         }
     }
     
+    // MARK: - Override
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpLabels()
@@ -54,7 +60,6 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupFetchedResultControllerHistory()
         setupFetchedResultControllerHistoryW()
         setupFetchedResultControllerHistorySpCat()
@@ -68,8 +73,7 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
         setUpColors()
         setDateLabel()
         
-        tableView.dataSource = self
-        tableView.delegate = self
+        setUpTableView()
         
         fetchedResulControllerR.delegate = self
         fetchedResulController.delegate = self
@@ -77,6 +81,7 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
         fetchedResulControllerSpendC.delegate = self
     }
     
+    // MARK: - Methods
     private func roundingViews() {
         viewSpend.layer.cornerRadius = 20.0
         viewEarn.layer.cornerRadius = 20.0
@@ -97,14 +102,13 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
     }
     
     private func setUpColors() {
-        view.backgroundColor = UIColor(named: "BackgroundColor")
-        tableView.backgroundColor = UIColor(named: "BackgroundColor")
-        viewEarn.backgroundColor = UIColor(named: "CollectionColor")
-        viewSpend.backgroundColor = UIColor(named: "CollectionColor")
+        view.backgroundColor = UIColor(named: Const.backgroundColor)
+        tableView.backgroundColor = UIColor(named: Const.backgroundColor)
+        viewEarn.backgroundColor = UIColor(named: Const.collectionColor)
+        viewSpend.backgroundColor = UIColor(named: Const.collectionColor)
     }
     
     private func setDateLabel() {
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
         dateFormatter.locale = Locale(identifier: "En-en")
@@ -112,6 +116,11 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
         monthLabel.text = dateFormatter.string(from: Date())
     }
     
+    private func setUpTableView() {
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+        
     private func setupFetchedResultControllerHistory() {
         let request = Spending.fetchRequest()
         let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
@@ -172,7 +181,6 @@ class HistoryVC: UIViewController, NSFetchedResultsControllerDelegate {
         loadWalletsForIncomes()
         loadReplenichments()
     }
-
 }
 
 extension HistoryVC: UITableViewDataSource, UITableViewDelegate {
@@ -208,6 +216,5 @@ extension HistoryVC: UITableViewDataSource, UITableViewDelegate {
             })
             delay += 1
         }
-                
     }
 }
